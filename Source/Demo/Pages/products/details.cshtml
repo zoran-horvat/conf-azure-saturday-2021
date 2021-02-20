@@ -1,0 +1,37 @@
+﻿@page "{productId}"
+@model Demo.Pages.Products.DetailsModel
+@{
+    ViewData["Title"] = "Product Details";
+}
+<table class="table table-striped">
+    <thead>
+        <tr class="table-secondary">
+            <th scope="col" colspan="4">Product Details</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td class="align-middle">Name</td>
+            <td class="align-middle">@Model.Product?.Name</td>
+            <td class="align-middle text-right" style="padding-right: 0"><img src="@Model.ProductImage" class="img-thumbnail @Model.ProductImageClass" width="150" /></td>
+            <td class="align-bottom text-left" style="padding-left: 0">
+                <form method="post" action="~/images/product/delete/@Model.ProductId">
+                    <button type="submit" class="btn btn-danger oi oi-x @Model.ProductImageClass" style="margin: 5px" />
+                </form>
+            </td>
+        </tr>
+    </tbody>
+    <tfoot>
+        <tr>
+            <td colspan="3" class="align-left align-middle">
+                <form method="post" enctype="multipart/form-data" action="~/images/product/insert/@Model.ProductId">
+                    <input type="file" name="uploadImage" />
+                    <button class="btn btn-primary" type="submit">Upload</button>
+                </form>
+            </td>
+            <td class="text-right align-middle">
+                <a class="btn btn-primary" asp-page="./index">Back</a>
+            </td>
+        </tr>
+    </tfoot>
+</table>
