@@ -16,7 +16,23 @@ namespace Demo
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)                                                                                                                                                                                                     // snp07 Configure appsettings.secrets.json
+            Host.CreateDefaultBuilder(args)
+                .ConfigureAppConfiguration((hostBuilder, configBuilder) =>
+                {
+                    if (hostBuilder.HostingEnvironment.IsDevelopment())
+                    {
+                        configBuilder.AddUserSecrets<Program>();
+                    }
+                    else
+                    {
+                        IConfiguration config = configBuilder.Build();
+                        string keyVaultName = config["keyVaultName"];
+                        SecretClient client = new SecretClient(
+                            new Uri($"https://{keyVaultName}.vault.azure.net/"),
+                            new ManagedIdentityCredential());
+                        configBuilder.AddAzureKeyVault(client, new KeyVaultSecretManager());
+                    }
+                })
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();

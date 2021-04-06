@@ -16,7 +16,7 @@ namespace Demo
     public class Startup
     {
         private string ConnectionString => 
-            @"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=SecretsDemo";                                                                                                                                                                 // snp01 Initially, LocalDB connection string was hardcoded
+            this.Configuration.DatabaseConectionString(this.CurrentEnvironment);
 
         private IWebHostEnvironment CurrentEnvironment { get; set; }
 
@@ -51,7 +51,12 @@ namespace Demo
 
             services.AddScoped<AssignedContentReadingContext>();
             services.AddScoped<FullOwnershipContentContext>();
-        }                                                                                                                                                                                                                                       // snp33 Add AzureStorageImages
+
+            services.AddSingleton<IImageStore, AzureStorageImages>(svc =>
+                new AzureStorageImages(
+                    this.Configuration.ImageStoreContainerName(this.CurrentEnvironment),
+                    this.Configuration.ImageStoreConnectionString(this.CurrentEnvironment)));
+        }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {

@@ -8,12 +8,12 @@ using System.Threading.Tasks;
 
 namespace Demo.Models.Images
 {
-    public class AzureStorageImages : IImageStore                                                                                                                                                                                               // snp19 Azure storage client is specific implementation
+    public class AzureStorageImages : IImageStore
     {
-        private string ContainerName { get; }                                                                                                                                                                                                   // snp20 It requires container name and connection string to storage
-        private string ConnectionString { get; }                                                                                                                                                                                                // snp20 end
+        private string ContainerName { get; }
+        private string ConnectionString { get; }
 
-        public AzureStorageImages(string containerName, string connectionString)                                                                                                                                                                // snp32 Now we need to inject these values from configuration
+        public AzureStorageImages(string containerName, string connectionString)
         {
             this.ContainerName = containerName;
             this.ConnectionString = connectionString;
@@ -55,16 +55,16 @@ namespace Demo.Models.Images
         private async Task<BlobContainerClient> GetBlobContainer()
         {
             BlobServiceClient service = this.GetBlobService();
-            BlobContainerClient container = service.GetBlobContainerClient(this.ContainerName);                                                                                                                                                 // snp22 Container name is used to open a container
+            BlobContainerClient container = service.GetBlobContainerClient(this.ContainerName);
             if (!(await container.ExistsAsync()))
             {
-                container = await service.CreateBlobContainerAsync(this.ContainerName);                                                                                                                                                         // snp23 If container doesn't exist, it will be created
+                container = await service.CreateBlobContainerAsync(this.ContainerName);
             }
             return container;
         }
 
         private BlobServiceClient GetBlobService() =>
-            new BlobServiceClient(this.ConnectionString);                                                                                                                                                                                       // snp21 Connection string is used to connect to BLOB service
+            new BlobServiceClient(this.ConnectionString);
 
         private Stream Load(Image image)
         {

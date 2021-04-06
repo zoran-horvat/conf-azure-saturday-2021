@@ -10,15 +10,20 @@ namespace Demo.Pages.images.product
     public class DeleteModel : PageModel
     {
         private IReadDbContext DbContext { get; }
-                                                                                                                                                                                                                                                // snp30 Inject dependency
-        public DeleteModel(FullOwnershipContentContext dbContext)
+        private IImageStore ImageStore { get; }
+
+        public DeleteModel(FullOwnershipContentContext dbContext, IImageStore imageStore)
         {
-            this.DbContext = dbContext;                                                                                                                                                                                                         // snp30 end
+            this.DbContext = dbContext;
+            this.ImageStore = imageStore;
         }
 
         public async Task<IActionResult> OnPostAsync(int productId)
         {
-            await Task.CompletedTask;                                                                                                                                                                                                           // snp31 Implement functionality
+            if (this.DbContext.Find<Product>(productId) is Product product)
+            {
+                await this.ImageStore.RemoveAsync(product.Reference);
+            }
             return RedirectToPage("/products/details", new { productId = productId });
         }
     }

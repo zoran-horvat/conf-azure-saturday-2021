@@ -11,15 +11,19 @@ namespace Demo.Pages.images.product
     public class InsertModel : PageModel
     {
         private IReadDbContext DbContext { get; }
-                                                                                                                                                                                                                                                // snp28 Inject IImageStore
-        public InsertModel(FullOwnershipContentContext dbContext)
+        private IImageStore ImageStore { get; }
+
+        public InsertModel(FullOwnershipContentContext dbContext, IImageStore imageStore)
         {
-            this.DbContext = dbContext;                                                                                                                                                                                                         // snp28 end
+            this.DbContext = dbContext;
+            this.ImageStore = imageStore;
         }
 
         public async Task<IActionResult> OnPostAsync(int productId, IFormFile uploadImage)
         {
-            await Task.CompletedTask;                                                                                                                                                                                                           // snp29 Implement functionality
+            await this.ImageStore.WriteAsync(
+                () => uploadImage?.OpenReadStream(),
+                this.DbContext.Find<Product>(productId));
             return RedirectToPage("/products/details", new { productId = productId });
         }
     }
